@@ -21,21 +21,22 @@ body {
 }
 .container-head {
 	background-color: rgba(132, 11, 42, 1); /* egglant */
-	padding: 1em 0;
+	padding: 1.5em;
 	position: relative;
-	top: 1em;
+	top: 2em;
 }
 .row-head {
-
 }
 .col-title-pic {
 
 }
 .title-pic {
-
+	width: 150px;
+	height: auto;
 }
 .col-title {
 	color: rgba(252, 176, 64, 1);  /* yellow */
+	padding: calc((150px - 4.5em)/2) 0 0 0;
 }
 .col-title h1 {
 	font-size: 4.5em;
@@ -47,6 +48,8 @@ body {
 }
 .reverse {
 	-webkit-transform: rotateY(180deg);
+	unicode-bidi: bidi-override;
+  	direction: rtl;
 }
 .small-caps {
 	font-variant: small-caps;
