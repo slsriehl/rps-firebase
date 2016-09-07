@@ -15,7 +15,7 @@
 
 body {
 	background-color: rgba(210, 18, 67, 1); /* pink */
-	font-family: 'Roboto Mono', monospace; /* text */
+	font-family: 'Anton', sans-serif; /* titles */
 	font-size: 2em;
 }
 
@@ -24,7 +24,8 @@ body {
 	background-position: center;
 	background-size: cover;
 	width: 100vw;
-	height: 100vh;
+	min-height: 100vh;
+	height: auto;
 	overflow: hidden;
 }
 .container-head {
@@ -101,4 +102,24 @@ body {
 	font-size: 3em;
 	color: rgba(252, 176, 64, 1);  /* yellow */
 }
+.col-play-pic {
+	text-align: center;
+}
+.container-play {
+	padding-top: 3em;
+}
+.row-play-choice {
+	
+}
+.row-play-battle {
+	display: none;
+}
+.row-play-choice h3 {
+	color: rgba(252, 176, 64, 1);  /* yellow */
+	font-size: 2.5em;
+	font-family: 'Anton', sans-serif; /* titles */
+}
+.col-my-play, .col-opponent-play {
+	text-align: center;
 
+}

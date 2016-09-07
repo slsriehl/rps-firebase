@@ -7,8 +7,46 @@
   };
   firebase.initializeApp(config);
 
+var name, play;
+var fire = firebase.database();
 
-  // player 1 inputs name
+function giveName() {
+	$('.row-start').slideUp(2000);
+	$('.row-play-choice').slideDown(2000);
+	name = $('#name-input').val();
+	fire.ref().push({
+		name: name
+	}); // end firebase push name
+} // end giveName
+function nameFocus(){
+	$('#name-input').focus(function() {
+		if((($('#name-input').attr('value')) || ($('#name-input').val()))  == 'Name') {
+			$('#name-input').attr('value', '');
+			$('#name-input').val('');
+			console.log('onfocus ' + $('#name-input').attr('value'), $('#name-input').val());
+		} // name-input focus if
+	}); // name-input focus
+	$('#name-input').blur(function() {
+		if((($('#name-input').attr('value')) || ($('#name-input').val()))  == '') {
+			$('#name-input').attr('value', 'Name');
+			$('#name-input').val('Name');
+			console.log('onblur ' + $('#name-input').attr('value'), $('#name-input').val());
+		} //name-input blur if
+	}); // name-input blur
+} //end nameFocus
+
+$(document).ready(function(){
+	nameFocus();
+	$('#name-submit').click(giveName);
+	$(document).onkeypress(function(e) {
+		if(e.which == 13) {
+			giveName();
+		}
+}); // end doc onkeypress
+
+}); // end doc ready
+
+  // player 1 inputs name /
   // waiting for player 2
   // player 2 inputs name
   // firebase save names
