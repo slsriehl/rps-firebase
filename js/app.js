@@ -7,17 +7,58 @@
   };
   firebase.initializeApp(config);
 
-var name, play;
+var name1 = 2;
+var name2 = 3;
+var play;
+var opponentName = 4;
 var fire = firebase.database();
 
 function giveName() {
 	$('.row-start').slideUp(2000);
 	$('.row-play-choice').slideDown(2000);
-	name = $('#name-input').val();
-	fire.ref().push({
-		name: name
-	}); // end firebase push name
+
+	fire.ref().on('value', function(snapshot) {
+
+		console.log('initial value of firebase name1 is ' + snapshot.child('name1').val());
+
+		if((snapshot.child('name1').val() === 1) || (snapshot.child('name1').val() == name1)) {
+			name1 = $('#name-input').val();
+			console.log('name input in name1 block is ' + $('#name-input').val());
+			console.log('local name 1 is ' + name1);
+			fire.ref().set({
+				name1: name1
+			}); // end firebase set name1
+			name1 = snapshot.child('name1').val();
+			$('#name-input').val('');
+			console.log('firebase name 1 is ' + snapshot.child('name1').val());
+		} else if((snapshot.child('name1').val() == name1) || ($('#name-input').val() != '')) {
+			name2 = $('#name-input').val();
+			console.log('name input in name2 block is ' + $('#name-input').val());
+			console.log('local name 2 is ' + name2);
+			fire.ref().set({
+				name1: snapshot.child('name1').val(),
+				name2: name2
+			}); // end firebase set name2
+			console.log('firebase name 2 is ' + snapshot.child('name2').val());
+			opponentName = snapshot.child('name1').val();
+			console.log('local opponent name (1) is ' + opponentName);
+		} else {
+			opponentName = snapshot.child('name2').val();
+			console.log('local opponent name (2) is ' + opponentName);
+		}// end name set if else
+
+		setTimeout(secondPlayer, 5000);
+
+		// setOpponentName(snapshot);
+	}); // end on value
+
+	
 } // end giveName
+
+function secondPlayer() {
+	console.log('foo');
+} // end secondPlayer
+
 function nameFocus(){
 	$('#name-input').focus(function() {
 		if((($('#name-input').attr('value')) || ($('#name-input').val()))  == 'Name') {
@@ -35,14 +76,21 @@ function nameFocus(){
 	}); // name-input blur
 } //end nameFocus
 
+function reset() {
+	fire.ref().set({
+		name1: 1,
+		name2: 1
+	});
+	var name1 = 2;
+	var name2 = 3;
+	var opponentName = 4;
+} // end reset names to begin
+
 $(document).ready(function(){
+	
 	nameFocus();
+	$('.btn-reset').click(reset);
 	$('#name-submit').click(giveName);
-	$(document).onkeypress(function(e) {
-		if(e.which == 13) {
-			giveName();
-		}
-}); // end doc onkeypress
 
 }); // end doc ready
 
