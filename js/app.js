@@ -91,6 +91,15 @@ function nameFocus(){
 	}); // name-input blur
 } //end nameFocus
 
+function makeMove() {
+	// click handler fires in first page, hide row-play-choice run set move and battle screen for nameX, push firebase nameX-move
+	// click handler fires in second page, run set move battle screen for nameX, push firebase nameX-move
+	// if move1 and move2 exist, set local move variables equal to firebase move variables and complete battle screens and reckon
+	// one second timeout, then animate reckoning function
+	// display score at the top, hide battle screen, show row-play-choice, repeat click handler
+} // end makeMove
+
+
 function resetFire() {
 	console.log('reset fired');
 	fire.ref().on('value', function(snapshot) {
@@ -125,6 +134,7 @@ $(document).ready(function(){
 	nameFocus();
 	$('.btn-reset').click(resetFire);
 	$('#name-submit').click(giveName);
+	$('.col-play-pic').click(makeMove);
 
 
 
@@ -146,4 +156,4 @@ $(document).ready(function(){
   // display as wins losses and ties at the top of the screen
   // repeat from ready, go!
   // on end game button, alert player that game end, push end game to firebase, alert other player that name has ended the game and reset both to name input screen
-  //
+  // .child.set()
