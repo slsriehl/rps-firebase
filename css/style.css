@@ -102,6 +102,15 @@ body {
 	font-size: 3em;
 	color: rgba(252, 176, 64, 1);  /* yellow */
 }
+.row-message {
+	display: none;
+	margin-top: 2em;
+}
+.col-message h3 {
+	font-family: 'Anton', sans-serif; /* titles */
+	font-size: 2em;
+	color: rgba(252, 176, 64, 1);  /* yellow */
+}
 .col-play-pic {
 	text-align: center;
 }
@@ -109,7 +118,7 @@ body {
 	padding-top: 3em;
 }
 .row-play-choice {
-	
+	display: none;
 }
 .row-play-battle {
 	display: none;

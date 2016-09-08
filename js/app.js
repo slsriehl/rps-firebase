@@ -12,16 +12,14 @@ var name2 = 3;
 var play;
 var opponentName = 4;
 var fire = firebase.database();
+var localReset;
 
 function giveName() {
-	$('.row-start').slideUp(2000);
-	$('.row-play-choice').slideDown(2000);
-
 	fire.ref().on('value', function(snapshot) {
-
+		$('.row-start').slideUp(2000);
 		console.log('initial value of firebase name1 is ' + snapshot.child('name1').val());
 
-		if((snapshot.child('name1').val() === 1) || (snapshot.child('name1').val() == name1)) {
+		if(((snapshot.child('name1').val() === 1) || (snapshot.child('name1').val() == name1)) && $('#name-input').val() !== '') {
 			name1 = $('#name-input').val();
 			console.log('name input in name1 block is ' + $('#name-input').val());
 			console.log('local name 1 is ' + name1);
@@ -29,8 +27,12 @@ function giveName() {
 				name1: name1
 			}); // end firebase set name1
 			name1 = snapshot.child('name1').val();
+			localReset = false;
 			$('#name-input').val('');
+			$('.row-message').show();
+			$('.col-message').html("<h3>Waiting for an opponent...</h3>");
 			console.log('firebase name 1 is ' + snapshot.child('name1').val());
+			console.log('localReset for name1 is ' + localReset);
 		} else if((snapshot.child('name1').val() == name1) || ($('#name-input').val() != '')) {
 			name2 = $('#name-input').val();
 			console.log('name input in name2 block is ' + $('#name-input').val());
@@ -39,25 +41,38 @@ function giveName() {
 				name1: snapshot.child('name1').val(),
 				name2: name2
 			}); // end firebase set name2
+			name2 = snapshot.child('name2').val();
+			localReset = false;
+			$('#name-input').val('');
 			console.log('firebase name 2 is ' + snapshot.child('name2').val());
 			opponentName = snapshot.child('name1').val();
 			console.log('local opponent name (1) is ' + opponentName);
+			console.log('localReset for name2 is ' + localReset);
+
 		} else {
 			opponentName = snapshot.child('name2').val();
 			console.log('local opponent name (2) is ' + opponentName);
+			fire.ref().off();
 		}// end name set if else
+		playersTogether(snapshot);
 
-		setTimeout(secondPlayer, 5000);
-
-		// setOpponentName(snapshot);
 	}); // end on value
-
 	
 } // end giveName
 
-function secondPlayer() {
-	console.log('foo');
-} // end secondPlayer
+function playersTogether(snapshot) {
+	if((opponentName !== 4) && (opponentName !== null)) {
+		console.log('opponent is ' + opponentName);
+		$('.row-message').show();
+		$('.col-message').html("<h3>You're playing with " + opponentName + " today.  Click rock, paper or scissors to play a round.  Have fun!</h3>");
+		setTimeout(startPlay, 3000);
+	} // show begin message
+} // end playersTogether
+
+function startPlay() {
+	$('.row-message').slideUp();
+	$('.row-play-choice').slideDown(2000);
+} // end startPlay
 
 function nameFocus(){
 	$('#name-input').focus(function() {
@@ -76,21 +91,42 @@ function nameFocus(){
 	}); // name-input blur
 } //end nameFocus
 
-function reset() {
-	fire.ref().set({
-		name1: 1,
-		name2: 1
-	});
-	var name1 = 2;
-	var name2 = 3;
-	var opponentName = 4;
-} // end reset names to begin
+function resetFire() {
+	console.log('reset fired');
+	fire.ref().on('value', function(snapshot) {
+		fire.ref().set({
+			name1: 1,
+			name2: 1,
+			reset: true
+		}); // end ref set
+		localReset = snapshot.child('reset').val();
+		console.log('localReset is ' + localReset);
+		fire.ref().off();
+	}); // end on value
+	nameFocus();
+} // end resetFire to begin
+
+function resetWrite() {
+	if(localReset == true) {
+		$('.row-message').hide();
+		$('.col-message').empty();
+		$('.row-play-choice').hide();
+		$('.row-play-battle').hide();
+		$('.row-start').slideDown();
+		opponentName = 4;
+		name1 = 2;
+		name2 = 3;
+		} // resetWrite snapshot if
+} // resetWrite write
+
 
 $(document).ready(function(){
 	
 	nameFocus();
-	$('.btn-reset').click(reset);
+	$('.btn-reset').click(resetFire);
 	$('#name-submit').click(giveName);
+
+
 
 }); // end doc ready
 
