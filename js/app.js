@@ -43,56 +43,60 @@ function start() {
 }
 
 function giveName() {
-	fire.ref().on('value', function(snapshot) {
-		data = snapshot.val();
-		$('.row-start').slideUp(2000);
-		console.log('initial value of firebase name1 is ' + data.player1.name);
+	$('.row-start').slideUp(2000);
+	console.log('initial value of firebase name1 is ' + data.player1.name);
 
-		if((data.player1.name === 1) && ($('#name-input').val() !== '')) {
-			playObj.player1.name = $('#name-input').val();
-			console.log('name input in player1.name block is ' + $('#name-input').val());
-			console.log('local name 1 is ' + playObj.player1.name);
-			fire.ref().update({
-				player1: {
-					name: playObj.player1.name,
-					play: 1
-				}
-			}); // end firebase set data.player1.name
-			playObj.player1.name = data.player1.name;
-			playObj.localReset = false;
-			$('#name-input').val('');
-			$('.row-message').show();
-			$('.col-message').html("<h3>Waiting for an opponent...</h3>");
-			console.log('firebase player1.name is ' + data.player1.name);
-			console.log('localReset for player1.name is ' + playObj.localReset);
-		} else if(($('#name-input').val() !== '') && (data.player1.name != playObj.player1.name) && (data.player2.name === 1)) {
-			playObj.player2.name = $('#name-input').val();
-			console.log('name input in name2 block is ' + $('#name-input').val());
-			console.log('local player2.name is ' + playObj.player2.name);
-			fire.ref().update({
-				player2: {
-					name: playObj.player2.name,
-					play: 1
-				}
-			}); // end firebase set name2
-			playObj.player2.name = data.player2.name;
-			playObj.localReset = false;
-			$('#name-input').val('');
-			console.log('firebase name 2 is ' + data.player2.name);
-			playObj.opponentName = data.player1.name;
-			console.log('local opponent name (1) is ' + playObj.opponentName);
-			console.log('localReset for name2 is ' + playObj.localReset);
-			fire.ref().off();
-
-		} else if((data.player2.name !== playObj.player2.name) && (data.player1.name === playObj.player1.name) && (data.player2.name !== 1)) {
-			playObj.player2.name = data.player2.name;
-			playObj.opponentName = data.player2.name;
-			console.log('local opponent name (2) is ' + playObj.opponentName);
-			fire.ref().off();
-		}// end name set if else
+	if((data.player1.name === 1) && ($('#name-input').val() !== '')) {
+		playObj.player1.name = $('#name-input').val();
+		console.log('name input in player1.name block is ' + $('#name-input').val());
+		console.log('local name 1 is ' + playObj.player1.name);
+		fire.ref().update({
+			player1: {
+				name: playObj.player1.name,
+				play: 1
+			}
+		}); // end firebase set data.player1.name
+		playObj.player1.name = data.player1.name;
+		playObj.localReset = false;
+		$('#name-input').val('');
+		$('.row-message').show();
+		$('.col-message').html("<h3>Waiting for an opponent...</h3>");
+		console.log('firebase player1.name is ' + data.player1.name);
+		console.log('localReset for player1.name is ' + playObj.localReset);
+		player2OpponentSet();
+	} else if(($('#name-input').val() !== '') && (data.player1.name != playObj.player1.name) && (data.player2.name === 1)) {
+		playObj.player2.name = $('#name-input').val();
+		console.log('name input in name2 block is ' + $('#name-input').val());
+		console.log('local player2.name is ' + playObj.player2.name);
+		fire.ref().update({
+			player2: {
+				name: playObj.player2.name,
+				play: 1
+			}
+		}); // end firebase set name2
+		playObj.player2.name = data.player2.name;
+		playObj.localReset = false;
+		$('#name-input').val('');
+		console.log('firebase name 2 is ' + data.player2.name);
+		playObj.opponentName = data.player1.name;
+		console.log('local opponent name (1) is ' + playObj.opponentName);
+		console.log('localReset for name2 is ' + playObj.localReset);
 		playersTogether();
-	}); // end on value
+
+	} // set player1 and player2
+
 } // end giveName
+
+function player2OpponentSet() {
+	if((data.player2.name !== playObj.player2.name) && (data.player1.name === playObj.player1.name) && (data.player2.name !== 1)) {
+		playObj.player2.name = data.player2.name;
+		playObj.opponentName = data.player2.name;
+		console.log('local opponent name (2) is ' + playObj.opponentName);
+		playersTogether();
+	} else {
+		setTimeout(player2OpponentSet, 1000);
+	}
+} // player2OpponentSet
 
 function playersTogether() {
 	if(playObj.opponentName !== null) {
@@ -126,7 +130,6 @@ function nameFocus(){
 } //end nameFocus
 
 function makeMove(event) {
-	fire.ref().on('value', function(snapshot) {
 		playObj.plays.myPlay = $(event.target).data('move');
 		console.log('myPlay is ' + playObj.plays.myPlay);
 		$('.row-play-choice').hide();
@@ -141,6 +144,7 @@ function makeMove(event) {
 				}
 			}); // end firebase update data.player1.play
 			console.log('set player1 play complete.  playObj.plays.myPlay for player 1 is "' + playObj.plays.myPlay + '" and data.player1.play is "' + data.player1.play +'"');
+			setLocalOpponent1Play();
 		} else if((playObj.opponentName === data.player1.name) && (data.player2.play === 1)){
 			console.log('player2 set play value in firebase');
 			playObj.player2.play = playObj.plays.myPlay;
@@ -151,23 +155,30 @@ function makeMove(event) {
 				}
 			}); // end firebase update data.player2.play
 			console.log('set player2 play complete.  playObj.plays.myPlay for player2 is "' + playObj.plays.myPlay + '" and data.player2.play is "' + data.player2.play +'"');
-		} // end set player1 and player2 in database
-
-		if((data.player1.play === playObj.plays.myPlay) && (data.player2.play !== 1)) {
+			setLocalOpponent2Play();
+		} // end set play db values
+		reckoning();
+} // end makeMove
+function setLocalOpponent1Play() {
+		if(data.player2.play !== 1) {
 			console.log('player1 set opponent play value locally');
 			playObj.player2.play = data.player2.play;
 			playObj.plays.opponentPlay = playObj.player2.play;
 			$('.col-opponent-play').html('<img src="img/' + playObj.plays.opponentPlay + '-small.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
-		} else if((data.player2.play === playObj.plays.myPlay) && (data.player1.play !== 1)) {
+		} else {
+			setTimeout(setLocalOpponent1Play, 1000);
+		}
+} // end set local opponent 1 play
+function setLocalOpponent2Play() {
+		if(data.player1.play !== 1) {
 			console.log('player2 set opponent play value locally');
 			playObj.player1.play = data.player1.play;
 			playObj.plays.opponentPlay = playObj.player1.play;
-			$('.col-opponent-play').html('<img src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
-		} // end set opponent values 
-		if((playObj.plays.myPlay !== 1) && (playObj.plays.opponentPlay !== 1)) {
-				reckoning();
-		} // end reckoning condition
-	}); // end onvalue function
+			$('.col-opponent-play').html('<img src="img/' + playObj.plays.opponentPlay + '-small.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
+		} else {
+			setTimeout(setLocalOpponent2Play, 1000);
+		}// end else if set opponent values
+} // end set local opponent values
 
 	// click handler fires in first page, hide row-play-choice run set playObj.playerX.play and battle screen for nameX, push firebase playerX.play
 
@@ -178,7 +189,6 @@ function makeMove(event) {
 	// one second timeout, then animate reckoning function
 
 	// display score at the top, hide battle screen, show row-play-choice, repeat click handler
-} // end makeMove
 
 function reckoning() {
 	console.log('reckoning fired');
@@ -186,7 +196,6 @@ function reckoning() {
 
 function resetFire() {
 	console.log('reset fired');
-	fire.ref().on('value', function(snapshot) {
 		fire.ref().set({
 			player1: {
 				name: 1,
@@ -198,19 +207,14 @@ function resetFire() {
 			},
 			reset: true
 		}); // end ref set
-
-		fire.ref().off();
-	}); // end on value
 	nameFocus();
 } // end resetFire to begin
 
 function resetWrite() {
-	fire.ref().on('value', function(snapshot) {
-		if(snapshot.child('reset').val() == true) {
-			playObj.localReset = snapshot.child('reset').val();
+		if(data.reset == true) {
+			playObj.localReset = data.reset;
 		} // end onvalue if
 	console.log('localReset is ' + playObj.localReset);
-	}); // end onvalue
 	if(playObj.localReset == true) {
 		$('.row-message').hide();
 		$('.col-message').empty();
@@ -241,12 +245,14 @@ $(document).ready(function(){
 	start();
 	nameFocus();
 	$('.btn-reset').click(resetFire);
-	resetWrite();
 	$('#name-submit').click(giveName);
 	$('.col-play-pic').click(function(event){
 		makeMove(event)
 	});
-
+	fire.ref().on('value', function(snapshot) {
+		data = snapshot.val();
+	});
+	resetWrite();
 
 
 }); // end doc ready
