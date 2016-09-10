@@ -16,20 +16,18 @@
 				<img class="title-pic" src="img/rock-small.jpg" alt="soviet-style raised fist in red" />
 			</div><!-- / col-title-pic -->
 
-			<div class="col col-xs-8 col-title">
-				<h1><span class="reverse">R</span><span class="small-caps">ock</span><span class="caps">P</span><span class="small-caps">aper</span><span class="caps">S</span><span class="small-caps">cissors</span></h1>
+			<div class="col col-xs-10 col-title">
+				<h1>Rock Paper Scissors</h1>
 			</div><!-- / col-title -->
 
-			<div class="col col-xs-2 col-reset">
-				<button class="btn btn-large btn-reset">Reset</button>
-			</div><!-- / col-reset -->
 		</div><!-- /row-head -->
 	</div><!-- /div container-head -->
 
 	<div class="container container-start">
 		<div class="row row-start">
 			<div class="col col-xs-12 col-start">
-				<h2>Play</h2>
+				<span>Play</span>
+				<br />
 					<input type="text" id="name-input" value="Name" />
 					<input type="button" id="name-submit" value="Start" />
 			</div><!-- / col-start -->
@@ -41,20 +39,34 @@
 	</div><!-- / container-start -->
 
 	<div class="container container-play">
+		<div class="row row-score">
+			<div class="col col-xs-4 col-score col-win">
+				<span></span>
+			</div><!-- end col-score -->
+			<div class="col col-xs-4 col-score col-tie">
+				<span></span>
+			</div><!-- end col-score -->
+			<div class="col col-xs-4 col-score col-lose">
+				<span></span>
+			</div><!-- end col-score -->
+		</div><!-- end row-score -->
 		<div class="row row-play-choice">
 			<div class="col col-xs-4 col-play-rock col-play-pic">
 				<img src="img/rock-small.jpg" alt="rock: soviet-style raised fist in red" data-move="rock" />
-				<h3>Rock</h3>
+				<br />
+				<span>Rock</span>
 			</div><!-- / col-play-rock -->
 
 			<div class="col col-xs-4 col-play-paper col-play-pic">
 				<img src="img/paper-small.jpg" alt="paper: soviet-style raised open hand in red" data-move="paper" />
-				<h3>Paper</h3>
+				<br />
+				<span>Paper</span>
 			</div><!-- / col-play-paper -->
 
 			<div class="col col-xs-4 col-play-scissors col-play-pic">
 				<img src="img/scissors-small.jpg" alt="scissors: soviet-style two fingers raised in red" data-move="scissors" />
-				<h3>Scissors</h3>
+				<br />
+				<span>Scissors</span>
 			</div><!-- / col-play-scissors -->
 		</div><!-- / row-play-choice -->
 

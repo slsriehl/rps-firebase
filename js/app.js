@@ -28,8 +28,7 @@ var playObj = {
 		opponentWins: 0,
 		ties: 0
 	},
-	opponentName: null,
-	localReset: null,
+	opponentName: null
 }
 
 
@@ -37,13 +36,12 @@ function start() {
 	fire.ref().set({
 			player1: {
 				name: 1,
-				play: 1,
+				play: 1
 			},
 			player2: {
 				name: 1,
-				play: 1,
-			},
-			reset: false,
+				play: 1
+			}
 		}); // end ref set
 }
 
@@ -62,12 +60,10 @@ function giveName() {
 			}
 		}); // end firebase set data.player1.name
 		playObj.player1.name = data.player1.name;
-		playObj.localReset = false;
 		$('#name-input').val('');
 		$('.row-message').show();
-		$('.col-message').html("<h3>Waiting for an opponent...</h3>");
+		$('.col-message').html("<span>Waiting for an opponent...</span>");
 		console.log('firebase player1.name is ' + data.player1.name);
-		console.log('localReset for player1.name is ' + playObj.localReset);
 		player2OpponentSet();
 	} else if(($('#name-input').val() !== '') && (data.player1.name != playObj.player1.name) && (data.player2.name === 1)) {
 		playObj.player2.name = $('#name-input').val();
@@ -80,12 +76,10 @@ function giveName() {
 			}
 		}); // end firebase set name2
 		playObj.player2.name = data.player2.name;
-		playObj.localReset = false;
 		$('#name-input').val('');
 		console.log('firebase name 2 is ' + data.player2.name);
 		playObj.opponentName = data.player1.name;
 		console.log('local opponent name (1) is ' + playObj.opponentName);
-		console.log('localReset for name2 is ' + playObj.localReset);
 		playersTogether();
 
 	} // set player1 and player2
@@ -107,7 +101,7 @@ function playersTogether() {
 	if(playObj.opponentName !== null) {
 		console.log('opponent is ' + playObj.opponentName);
 		$('.row-message').show();
-		$('.col-message').html("<h3>You're playing with " + playObj.opponentName + " today.  Click rock, paper or scissors to play a round.  Have fun!</h3>");
+		$('.col-message').html("<span>You're playing with " + playObj.opponentName + " today.  Click rock, paper or scissors to play a round.  Have fun!</span>");
 		setTimeout(startPlay, 2000);
 	} // show begin message
 } // end playersTogether
@@ -138,8 +132,9 @@ function makeMove(event) {
 		playObj.plays.myPlay = $(event.target).data('move');
 		console.log('myPlay is ' + playObj.plays.myPlay);
 		$('.row-play-choice').hide();
+		$('.row-play-battle').show();
 		$('.pic-my-play').html('<img class="battle-img" src="img/' + playObj.plays.myPlay + '.jpg" alt="You played ' + playObj.plays.myPlay + '" />');
-		$('.my-move-caption').html('<h3>' + playObj.plays.myPlay + '</h3>');
+		$('.my-move-caption').html('<span>' + playObj.plays.myPlay + '</span>');
 		if((playObj.opponentName === data.player2.name) && (data.player1.play === 1)) {
 			console.log('player 1 set play value in firebase');
 			playObj.player1.play = playObj.plays.myPlay;
@@ -170,7 +165,7 @@ function setLocalOpponent1Play() {
 			playObj.player2.play = data.player2.play;
 			playObj.plays.opponentPlay = playObj.player2.play;
 			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
-			$('.opponent-move-caption').html('<h3>' + playObj.plays.opponentPlay + '</h3>');
+			$('.opponent-move-caption').html('<span>' + playObj.plays.opponentPlay + '</span>');
 			setTimeout(reckoning, 1000);
 		} else {
 			setTimeout(setLocalOpponent1Play, 500);
@@ -182,7 +177,7 @@ function setLocalOpponent2Play() {
 			playObj.player1.play = data.player1.play;
 			playObj.plays.opponentPlay = playObj.player1.play;
 			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
-			$('.opponent-move-caption').html('<h3>' + playObj.plays.opponentPlay + '</h3>');
+			$('.opponent-move-caption').html('<span>' + playObj.plays.opponentPlay + '</span>');
 			setTimeout(reckoning, 1000);
 		} else {
 			setTimeout(setLocalOpponent2Play, 500);
@@ -202,81 +197,70 @@ function setLocalOpponent2Play() {
 function reckoning() {
 	console.log('reckoning fired');
 	$('.row-play-battle').hide();
+	$('.row-reckoning').show();
 	if(playObj.plays.opponentPlay === playObj.plays.myPlay){
-		$('.winning-pic').empty;
-		$('.outcome-message').html('<h3>you tie!</h3>');
+		$('.winning-pic').html('<img class="battle-img" src="img/' + playObj.plays.myPlay + '.jpg" alt="You tie!" />');
+		$('.outcome-message').html('<span>you tie!</span>');
 		playObj.wins.ties++;
+		$('.col-win').find('span').text('wins: ' + playObj.wins.myWins);
+		$('.col-tie').find('span').text('ties: ' + playObj.wins.ties);
+		$('.col-lose').find('span').text('losses: ' + playObj.wins.opponentWins);
+		console.log('ties is ' + playObj.wins.ties);
 	} else if((playObj.plays.myPlay == 'rock' && playObj.plays.opponentPlay == 'scissors') || (playObj.plays.myPlay == 'scissors' && playObj.plays.opponentPlay == 'paper') || (playObj.plays.myPlay == 'paper' && playObj.plays.opponentPlay == 'rock')){
 			$('.winning-pic').html('<img class="battle-img" src="img/' + playObj.plays.myPlay + '.jpg" alt="You win!" />');
-			$('.outcome-message').html('<h3>' + playObj.plays.myPlay + ' beats ' + playObj.plays.opponentPlay + '.  you win!</h3>');
+			$('.outcome-message').html('<span>' + playObj.plays.myPlay + ' beats ' + playObj.plays.opponentPlay + '.  you win!</span>');
 			playObj.wins.myWins++;
+			$('.col-win').find('span').text('wins: ' + playObj.wins.myWins);
+			$('.col-tie').find('span').text('ties: ' + playObj.wins.ties);
+			$('.col-lose').find('span').text('losses: ' + playObj.wins.opponentWins);
+			console.log('myWins is ' + playObj.wins.myWins);
 	} else {
 			$('.winning-pic').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="You lose!" />');
-			$('.outcome-message').html('<h3>' + playObj.plays.opponentPlay + ' beats ' + playObj.plays.myPlay + '.  you lose!</h3>');
+			$('.outcome-message').html('<span>' + playObj.plays.opponentPlay + ' beats ' + playObj.plays.myPlay + '.  you lose!</span>');
 			playObj.wins.opponentWins++;
+			$('.col-win').find('span').text('wins: ' + playObj.wins.myWins);
+			$('.col-tie').find('span').text('ties: ' + playObj.wins.ties);
+			$('.col-lose').find('span').text('losses: ' + playObj.wins.opponentWins);
+			console.log('opponentWins is ' + playObj.wins.opponentWins);
 	} // end reckoning game logic
-
+	setTimeout(setNext, 2000);
 } // end reckoning
+function setNext() {
 
-function resetFire() {
-	console.log('reset fired');
-		fire.ref().set({
-			player1: {
-				name: 1,
-				play: 1
-			},
-			player2: {
-				name: 1,
-				play: 1
-			},
-			reset: true
-		}); // end ref set
-	nameFocus();
-} // end resetFire to begin
+	fire.ref().update({
+		player1: {
+			name: data.player1.name,
+			play: 1
+		},
+		player2: {
+			name: data.player2.name,
+			play: 1
+		}
+	});
 
-function resetWrite() {
-		if(data.reset == true) {
-			playObj.localReset = data.reset;
-		} // end onvalue if
-	console.log('localReset is ' + playObj.localReset);
-	if(playObj.localReset == true) {
-		$('.row-message').hide();
-		$('.col-message').empty();
-		$('.row-play-choice').hide();
-		$('.row-play-battle').hide();
-		$('.row-start').slideDown();
-		playObj = {
-			player1: {
-				name: 2,
-				play: 2
-			},
-			player2: {
-				name: 3,
-				play: 3
-			},
-			plays: {
-				myPlay: 5,
-				opponentPlay: 5
-			},
-			opponentName: null,
-			localReset: null,
-		} // end playObj reset
-	} // resetWrite snapshot if
-} // resetWrite write
+	$('.row-reckoning').hide();
+	$('.pic-opponent-play, .opponent-move-caption, .my-move-caption, .pic-my-play, .winning-pic, .outcome-message').empty();
+	$('.row-play-choice').show();
+}
+
+
 
 
 $(document).ready(function(){
-	start();
-	nameFocus();
-	$('.btn-reset').click(resetFire);
-	$('#name-submit').click(giveName);
-	$('.col-play-pic').click(function(event){
-		makeMove(event)
-	});
 	fire.ref().on('value', function(snapshot) {
 		data = snapshot.val();
 	});
-	resetWrite();
+	start();
+	nameFocus();
+	$('#name-submit').click(giveName);
+	$(document).keypress(function(event) {
+		if(event.which === 13) {
+			giveName();
+		}
+	});
+	$('.col-play-pic').click(function(event){
+		makeMove(event)
+	});
 
 
 }); // end doc ready
