@@ -166,7 +166,7 @@ function setLocalOpponent1Play() {
 			playObj.plays.opponentPlay = playObj.player2.play;
 			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
 			$('.opponent-move-caption').html('<span>' + playObj.plays.opponentPlay + '</span>');
-			setTimeout(reckoning, 1000);
+			setTimeout(reckoning, 3000);
 		} else {
 			setTimeout(setLocalOpponent1Play, 500);
 		}
@@ -178,7 +178,7 @@ function setLocalOpponent2Play() {
 			playObj.plays.opponentPlay = playObj.player1.play;
 			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
 			$('.opponent-move-caption').html('<span>' + playObj.plays.opponentPlay + '</span>');
-			setTimeout(reckoning, 1000);
+			setTimeout(reckoning, 3000);
 		} else {
 			setTimeout(setLocalOpponent2Play, 500);
 		}// end else if set opponent values
@@ -223,7 +223,7 @@ function reckoning() {
 			$('.col-lose').find('span').text('losses: ' + playObj.wins.opponentWins);
 			console.log('opponentWins is ' + playObj.wins.opponentWins);
 	} // end reckoning game logic
-	setTimeout(setNext, 2000);
+	setTimeout(setNext, 3000);
 } // end reckoning
 function setNext() {
 
