@@ -129,5 +129,24 @@ body {
 }
 .col-my-play, .col-opponent-play {
 	text-align: center;
+	padding: .5em;
+	margin: .25em;
+	width: calc(50% - 1.5em);
 
+}
+.battle-img, .winning-img {
+	height: auto;
+	width: 100%;
+}
+
+.pic-my-play, .pic-opponent-play, .winning-pic {
+	width: 100%;
+	max-width: 400px;
+	text-align: center;
+}
+.my-move-caption h3, .opponent-move-caption h3, .outcome-message h3 {
+	color: rgba(252, 176, 64, 1);  /* yellow */
+	font-size: 2.5em;
+	font-family: 'Anton', sans-serif; /* titles */
+	text-align: center;
 }

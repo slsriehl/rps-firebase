@@ -23,6 +23,11 @@ var playObj = {
 		myPlay: 1,
 		opponentPlay: 1
 	},
+	wins: {
+		myWins: 0,
+		opponentWins: 0,
+		ties: 0
+	},
 	opponentName: null,
 	localReset: null,
 }
@@ -32,11 +37,11 @@ function start() {
 	fire.ref().set({
 			player1: {
 				name: 1,
-				play: 1
+				play: 1,
 			},
 			player2: {
 				name: 1,
-				play: 1
+				play: 1,
 			},
 			reset: false,
 		}); // end ref set
@@ -94,7 +99,7 @@ function player2OpponentSet() {
 		console.log('local opponent name (2) is ' + playObj.opponentName);
 		playersTogether();
 	} else {
-		setTimeout(player2OpponentSet, 1000);
+		setTimeout(player2OpponentSet, 500);
 	}
 } // player2OpponentSet
 
@@ -103,13 +108,13 @@ function playersTogether() {
 		console.log('opponent is ' + playObj.opponentName);
 		$('.row-message').show();
 		$('.col-message').html("<h3>You're playing with " + playObj.opponentName + " today.  Click rock, paper or scissors to play a round.  Have fun!</h3>");
-		setTimeout(startPlay, 3000);
+		setTimeout(startPlay, 2000);
 	} // show begin message
 } // end playersTogether
 
 function startPlay() {
 	$('.row-message').slideUp();
-	$('.row-play-choice').slideDown(2000);
+	$('.row-play-choice').slideDown();
 } // end startPlay
 
 function nameFocus(){
@@ -133,7 +138,8 @@ function makeMove(event) {
 		playObj.plays.myPlay = $(event.target).data('move');
 		console.log('myPlay is ' + playObj.plays.myPlay);
 		$('.row-play-choice').hide();
-		$('.col-my-play').html('<img src="img/' + playObj.plays.myPlay + '-small.jpg" alt="You played ' + playObj.plays.myPlay + '" />');
+		$('.pic-my-play').html('<img class="battle-img" src="img/' + playObj.plays.myPlay + '.jpg" alt="You played ' + playObj.plays.myPlay + '" />');
+		$('.my-move-caption').html('<h3>' + playObj.plays.myPlay + '</h3>');
 		if((playObj.opponentName === data.player2.name) && (data.player1.play === 1)) {
 			console.log('player 1 set play value in firebase');
 			playObj.player1.play = playObj.plays.myPlay;
@@ -157,16 +163,17 @@ function makeMove(event) {
 			console.log('set player2 play complete.  playObj.plays.myPlay for player2 is "' + playObj.plays.myPlay + '" and data.player2.play is "' + data.player2.play +'"');
 			setLocalOpponent2Play();
 		} // end set play db values
-		reckoning();
 } // end makeMove
 function setLocalOpponent1Play() {
 		if(data.player2.play !== 1) {
 			console.log('player1 set opponent play value locally');
 			playObj.player2.play = data.player2.play;
 			playObj.plays.opponentPlay = playObj.player2.play;
-			$('.col-opponent-play').html('<img src="img/' + playObj.plays.opponentPlay + '-small.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
+			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
+			$('.opponent-move-caption').html('<h3>' + playObj.plays.opponentPlay + '</h3>');
+			setTimeout(reckoning, 1000);
 		} else {
-			setTimeout(setLocalOpponent1Play, 1000);
+			setTimeout(setLocalOpponent1Play, 500);
 		}
 } // end set local opponent 1 play
 function setLocalOpponent2Play() {
@@ -174,9 +181,11 @@ function setLocalOpponent2Play() {
 			console.log('player2 set opponent play value locally');
 			playObj.player1.play = data.player1.play;
 			playObj.plays.opponentPlay = playObj.player1.play;
-			$('.col-opponent-play').html('<img src="img/' + playObj.plays.opponentPlay + '-small.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
+			$('.pic-opponent-play').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="Your opponent played ' + playObj.plays.opponentPlay + '" />');
+			$('.opponent-move-caption').html('<h3>' + playObj.plays.opponentPlay + '</h3>');
+			setTimeout(reckoning, 1000);
 		} else {
-			setTimeout(setLocalOpponent2Play, 1000);
+			setTimeout(setLocalOpponent2Play, 500);
 		}// end else if set opponent values
 } // end set local opponent values
 
@@ -192,7 +201,22 @@ function setLocalOpponent2Play() {
 
 function reckoning() {
 	console.log('reckoning fired');
-}
+	$('.row-play-battle').hide();
+	if(playObj.plays.opponentPlay === playObj.plays.myPlay){
+		$('.winning-pic').empty;
+		$('.outcome-message').html('<h3>you tie!</h3>');
+		playObj.wins.ties++;
+	} else if((playObj.plays.myPlay == 'rock' && playObj.plays.opponentPlay == 'scissors') || (playObj.plays.myPlay == 'scissors' && playObj.plays.opponentPlay == 'paper') || (playObj.plays.myPlay == 'paper' && playObj.plays.opponentPlay == 'rock')){
+			$('.winning-pic').html('<img class="battle-img" src="img/' + playObj.plays.myPlay + '.jpg" alt="You win!" />');
+			$('.outcome-message').html('<h3>' + playObj.plays.myPlay + ' beats ' + playObj.plays.opponentPlay + '.  you win!</h3>');
+			playObj.wins.myWins++;
+	} else {
+			$('.winning-pic').html('<img class="battle-img" src="img/' + playObj.plays.opponentPlay + '.jpg" alt="You lose!" />');
+			$('.outcome-message').html('<h3>' + playObj.plays.opponentPlay + ' beats ' + playObj.plays.myPlay + '.  you lose!</h3>');
+			playObj.wins.opponentWins++;
+	} // end reckoning game logic
+
+} // end reckoning
 
 function resetFire() {
 	console.log('reset fired');
